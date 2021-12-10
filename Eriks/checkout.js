@@ -1,7 +1,7 @@
 const bodyElement = document.body;
 
 // hostSite determines which website we are serving to --
-const hostSite = window.location.host.split(".")[0];
+const hostSite = window.location.host.split(".")[1];
 
 let whereIAm;
 switch (hostSite) {
