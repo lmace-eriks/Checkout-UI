@@ -17,36 +17,44 @@ const confirmParagraphWords = "FedEx Delivery Manager® is a Free Service. If yo
 const confirmDeclineButtonWords = "I Still Want To Decline";
 const confirmAcceptButtonWords = "OK, Sign Me Up";
 
-// devEnv is used for internal testing. Sets modal display timer to 5 seconds
-// for internal and 30 minutes for live production --
+// devEnv is used for internal testing. Sets timeSinceLastModal
+// to 5 seconds for internal and 30 minutes for live production.
+// See logUserTime() notes --
 const devEnv = localStorage.getItem("localDevEnv") === "true" ? true : false;
-const modalTimer = devEnv ? 5000 : 1800000;
+const timeSinceLastModal = devEnv ? 5000 : 1800000;
 
 let modalActive = false;
 const showFedExModal = () => {
     modalActive = true;
 
+    // Snaps window to top of page to view modal --
+    window.scrollTo(0, 0);
+
     const closeModal = () => {
         modalActive = false;
         modalBackground.remove();
+        clearInterval(everyTwoSeconds);
     }
 
+    // User clicks Sign Me Up. Opens new page, clears the timeout function --
     const userAcceptFedEx = () => {
         logUserTime();
         window.open(goToFedExLink, "_blank");
         closeModal();
-        clearInterval(everyTwoSeconds);
     }
 
+    // User clicks Decline, Shows confirmation content --
     const userFirstDeclineFedEx = () => {
         showConfirmModal();
     }
 
+    // I Still Want to Decline function --
     const userSecondDeclineFedEx = () => {
         logUserTime();
         closeModal();
     }
 
+    // Changes modal to the "Are You Sure?" content --
     const showConfirmModal = () => {
         modalUL.remove();
         modalFinePrint.remove();
@@ -126,16 +134,20 @@ const showFedExModal = () => {
     modalFinePrint.className = "fine-print";
     modalFinePrint.innerText = modalFinePrintWords;
     modalContainer.appendChild(modalFinePrint);
-
 }
 
+// Checks every two seconds if modal should display. There is no clear "listener" for if the
+// user has clicked "delivery" so this is the workaround. This is a fallback for if the default
+// option for a user is "pickup" and then they change to "delivery". Will not display more than once per
+// half hour. Sets a localStorage variable called "userModalTime" and checks to see when the last
+// time a user has made a selection in the modal. Once the user makes a selection the timer stops running --
 const everyTwoSeconds = setInterval(() => {
     const deliveryMethod = localStorage.getItem("activeDeliveryChannel");
     const userModalTime = Number(localStorage.getItem("userModalTime"));
     const rightNow = Date.now();
     const delta = rightNow - userModalTime;
 
-    if (deliveryMethod === "delivery" && !modalActive && delta > modalTimer) {
+    if (deliveryMethod === "delivery" && !modalActive && delta > timeSinceLastModal) {
         showFedExModal();
     }
 }, 2000);
