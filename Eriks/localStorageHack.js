@@ -4,3 +4,5 @@
 // localStorage would always be set to delivery. Exists for 
 // testing only - LM
 localStorage.setItem("activeDeliveryChannel", "delivery");
+
+localStorage.setItem("localDevEnv", "true");

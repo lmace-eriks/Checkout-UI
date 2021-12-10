@@ -17,7 +17,8 @@ const confirmParagraphWords = "FedEx Delivery Manager® is a Free Service. If yo
 const confirmDeclineButtonWords = "I Still Want To Decline";
 const confirmAcceptButtonWords = "OK, Sign Me Up";
 
-const halfHour = 1800000;
+const devEnv = localStorage.getItem("localDevEnv") === "true" ? true : false;
+const modalTimer = devEnv ? 5000 : 1800000;
 
 const showFedExModal = () => {
 
@@ -47,6 +48,7 @@ const showFedExModal = () => {
         modalParagraph.innerText = confirmParagraphWords;
         acceptFedExButton.innerText = confirmAcceptButtonWords;
         declineFedExButton.innerText = confirmDeclineButtonWords;
+        declineFedExButton.onclick = userSecondDeclineFedEx;
     }
 
     const logUserTime = () => {
@@ -122,7 +124,7 @@ const deliveryMethod = localStorage.getItem("activeDeliveryChannel");
 if (deliveryMethod === "delivery") {
     const userModalTime = Number(localStorage.getItem("userModalTime"));
     const rightNow = Date.now();
-
     const delta = rightNow - userModalTime
-    showFedExModal();
+
+    if (delta > modalTimer) showFedExModal();
 }
