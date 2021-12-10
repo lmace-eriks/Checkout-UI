@@ -3,9 +3,9 @@ const modalTitleWords = "Increase Security for Your Shipment";
 const modalParagraphWords = "To ensure your order arrives safely to your door, we strongly recommend signing up for the FREE FedEx Delivery Manager®. This will allow you to:"
 
 const ulItems = [
-"Track Packages and Get Alerts on the status of your shipment",
-"Added security with the option to pick-up your package from thousands of convenient locations",
-"Increased convenience by allowing you to schedule specific delivery windows or deliver to a different address*"];
+    "Track Packages and Get Alerts on the status of your shipment",
+    "Added security with the option to pick-up your package from thousands of convenient locations",
+    "Increased convenience by allowing you to schedule specific delivery windows or deliver to a different address*"];
 
 const modalFinePrintWords = "*Scheduling a delivery window, requesting delivery to another address or Deliver Another Day are subject to additional FedEx Fees";
 const modalAcceptWords = "Sign Me Up!";
@@ -17,12 +17,17 @@ const confirmParagraphWords = "FedEx Delivery Manager® is a Free Service. If yo
 const confirmDeclineButtonWords = "I Still Want To Decline";
 const confirmAcceptButtonWords = "OK, Sign Me Up";
 
+// devEnv is used for internal testing. Sets modal display timer to 5 seconds
+// for internal and 30 minutes for live production --
 const devEnv = localStorage.getItem("localDevEnv") === "true" ? true : false;
 const modalTimer = devEnv ? 5000 : 1800000;
 
+let modalActive = false;
 const showFedExModal = () => {
+    modalActive = true;
 
     const closeModal = () => {
+        modalActive = false;
         modalBackground.remove();
     }
 
@@ -30,6 +35,7 @@ const showFedExModal = () => {
         logUserTime();
         window.open(goToFedExLink, "_blank");
         closeModal();
+        clearInterval(everyTwoSeconds);
     }
 
     const userFirstDeclineFedEx = () => {
@@ -51,6 +57,10 @@ const showFedExModal = () => {
         declineFedExButton.onclick = userSecondDeclineFedEx;
     }
 
+    // Logs the time for user confirm or deny. This prevents the user
+    // from seeing the modal multiple times per session if they switch
+    // back and forth between delivery and pickup. Also if they are viewing
+    // their cart multiple times within a half hour --
     const logUserTime = () => {
         localStorage.setItem("userModalTime", Date.now());
     }
@@ -119,12 +129,13 @@ const showFedExModal = () => {
 
 }
 
-const deliveryMethod = localStorage.getItem("activeDeliveryChannel");
-
-if (deliveryMethod === "delivery") {
+const everyTwoSeconds = setInterval(() => {
+    const deliveryMethod = localStorage.getItem("activeDeliveryChannel");
     const userModalTime = Number(localStorage.getItem("userModalTime"));
     const rightNow = Date.now();
-    const delta = rightNow - userModalTime
+    const delta = rightNow - userModalTime;
 
-    if (delta > modalTimer) showFedExModal();
-}
+    if (deliveryMethod === "delivery" && !modalActive && delta > modalTimer) {
+        showFedExModal();
+    }
+}, 2000);
