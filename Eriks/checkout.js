@@ -1,4 +1,22 @@
 const bodyElement = document.body;
+
+// hostSite determines which website we are serving to --
+const hostSite = window.location.host.split(".")[0];
+
+let whereIAm;
+switch (hostSite) {
+    case "eriksbikeshop":
+        whereIAm = "Erik's";
+        break;
+    case "shredshop":
+        whereIAm = "Shred Shop";
+        break;
+
+    default:
+        whereIAm = "the shipping party"
+        break;
+}
+
 const modalTitleWords = "Increase Security for Your Shipment";
 const modalParagraphWords = "To ensure your order arrives safely to your door, we strongly recommend signing up for the FREE FedEx Delivery Manager®. This will allow you to:"
 
@@ -13,7 +31,7 @@ const modalDeclineWords = "Decline Additional Security";
 const goToFedExLink = "https://www.fedex.com/en-us/delivery-manager.html";
 
 const confirmTitleWords = "Are you sure?";
-const confirmParagraphWords = "FedEx Delivery Manager® is a Free Service. If your package shows as Delivered by FedEx but you can't locate it, neither ERIK'S nor FedEx can be held responsible.";
+const confirmParagraphWords = `FedEx Delivery Manager® is a Free Service. If your package shows as Delivered by FedEx but you can't locate it, neither ${whereIAm} nor FedEx can be held responsible.`;
 const confirmDeclineButtonWords = "I Still Want To Decline";
 const confirmAcceptButtonWords = "OK, Sign Me Up";
 
