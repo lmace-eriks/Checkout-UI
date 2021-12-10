@@ -45,6 +45,7 @@ const showFedExModal = () => {
 
     // User clicks Decline, Shows confirmation content --
     const userFirstDeclineFedEx = () => {
+        window.scrollTo(0, 0);
         showConfirmModal();
     }
 
